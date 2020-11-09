@@ -3,7 +3,7 @@ install.packages("sfsmisc")
 library("dynRB")
 library(ggplot2)
 library(ggpubr)
-
+fix(dynRB_VPa)
 
 data(finch)
 head(finch)[,1:5]
@@ -24,18 +24,19 @@ finch4<-finch2[20:32,]
 a<-finch3$BodyL
 b<-finch4$BodyL
 # simulate samples form 4 species which would be compared 
-a<-rnorm(1000,10,5)
-b<-rbinom(c(2,20), p=c(0.5,0.5), n=1000)
-d<-rnorm(1000,10,1)
-e<-rnorm(1000,-10,1)
 
 
+
+(density(finch[finch[,1]%in%Species_interest, Trait],from = lower,to = upper,n=1000))
 
 
 # define limits of a common grid, adding a buffer so that tails aren't cut off
-lower <- min(c(a, b,d,e)) - 1 
-upper <- max(c(a, b,d,e)) + 1
+lower <- min(c(a, b,d,e)) 
+upper <- max(c(a, b,d,e))
 plot(density(a,from = lower,to = upper,n=1000))
+lines(density(a,from = lower,to = upper,n=1000))
+
+
 
 lines(density(b,from = lower,to = upper,n=1000))
 lines(density(d,from = lower,to = upper,n=1000))
@@ -99,54 +100,11 @@ overlap_AD_C/Volume_D
 
 
 
-# calculate intersection densities
-d$w <- pmin(d$a, d$b)
-d$wa<-pmin(d$a)
-d$wb<-pmin(d$b)
-
-# integrate areas under curves
-library(sfsmisc)
-total <- integrate.xy(d$xA, d$a) + integrate.xy(d$xB, d$b)
-
-
-intersection <- integrate.xy(d$xA, d$w)
-
-# compute overlap coefficient
-overlap <- 2 * intersection / total
-
-overlap
-
-
-
-
-##  Create the two density functions and display
-ADensity <- approxfun(density(a, from=lower, to=upper))
-BDensity <- approxfun(density(b, from=lower, to=upper))
-plot(ADensity, xlim=c(lower,upper), ylab="Density")
-curve(BDensity, add=TRUE)
-
-
-## Solve for the intersection and plot to confirm
-AminusB <- function(x) { ADensity(x) - BDensity(x) }
-
-Intersect<-uniroot(AminusB, c(lower, upper))$root
-
-
-?uniroot
-
-Intersect = uniroot(FminusM, c(40, 80))$root
-points(Intersect, FDensity(Intersect), pch=20, col="red")
 
 
 
 
 
-plot(a)
-lines(b)
-
-trail<-ks.test(finch4$BodyL,finch3$BodyL, exact = NULL)
-
-trail$statistic
 
 
 
@@ -202,15 +160,11 @@ diff(flections)
 
 
 # Show the contour only
-ggplot(finch2, aes(x=BodyL, y=WingL,group=Species,colour=Species) ) +
+ggplot(finch, aes(x=BodyL, y=WingL,group=Species,colour=Species) ) +
   geom_density_2d(aes(alpha=..level..),contour_var = "ndensity")+
   theme_bw()+
   geom_point()+
   labs(title="Plot 2")
 
 
-ggplot(finch2, aes(x=BodyL, y=WingL, colour=Species)) +
-  stat_contour(binwidth=10) +
-  theme(panel.background=element_rect(fill="grey90")) +
-  theme(panel.grid=element_blank()) +
-  labs(title="Plot 1")
+
