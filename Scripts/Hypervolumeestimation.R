@@ -3,7 +3,7 @@ install.packages("sfsmisc")
 library("dynRB")
 library(ggplot2)
 library(ggpubr)
-fix(dynRB_VPa)
+
 
 data(finch)
 head(finch)[,1:5]
@@ -25,9 +25,6 @@ a<-finch3$BodyL
 b<-finch4$BodyL
 # simulate samples form 4 species which would be compared 
 
-
-
-(density(finch[finch[,1]%in%Species_interest, Trait],from = lower,to = upper,n=1000))
 
 
 # define limits of a common grid, adding a buffer so that tails aren't cut off
@@ -116,14 +113,17 @@ traildensity$coordinates$setup_data
 
 
 
-ggdensity(finch2, x = "WingL",
+ggdensity(finch, x = "WingL",
           add = "mean", rug = TRUE,
           color = "Species", fill = "Species")
 
 #density function 
-dens<-density(finch2$BodyL[1:19],n=1000)
+dens<-density(finch$WingL[136:146],n=1000)
 
-dens$x
+dens$bw
+
+dens<-density(finch$WingL[136:146],n=1000, bw="SJ-ste")
+
 
 # dy/dx first derivative
 first<-diff(dens$y)/diff(dens$x)
@@ -146,7 +146,7 @@ for(i in 2:length(first)){
 
 
 
-plot(density(finch2$BodyL[1:19],n=1000))
+plot(density(finch$WingL[136:146],n=1000))
 
 abline(v=dens$x[flections],lty=2)
 abline(v=dens$x[maxima],lty=3,col="red")
