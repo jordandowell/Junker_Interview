@@ -142,3 +142,5 @@ View(apply(abind::abind(Volumesforaveraging, along = 2), 1, prod))
 #best is sum divided by number of traits...each value is a probability so consider each independent and divide by total dimensions
 View(apply(abind::abind(Volumesforaveraging, along = 2), 1, FUN= function(x){sum(x/length(TraitList))}  ))
 
+
+Hypervolumeobject$
